@@ -1,61 +1,71 @@
 package com.example.taskapp.service;
 
 import com.example.taskapp.entity.Task;
+import com.example.taskapp.repository.TaskRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class TaskService {
 
-    private List<Task> taskList = new ArrayList<>();
-    private Long idCounter = 1L;
+    @Autowired
+    private TaskRepository taskRepository;
 
-    // Add task
+
     public void addTask(Task task) {
-        task.setId(idCounter++);
         task.setStatus("pending");
-        taskList.add(task);
+        taskRepository.save(task);
     }
 
-    // Get all tasks
+
     public List<Task> getAllTasks() {
-        return taskList;
+        return taskRepository.findAll();
     }
 
-    // Delete a task
-    public void deleteTask(Long id) {
-        taskList.removeIf(t -> t.getId().equals(id));
+
+    public Page<Task> getTasksPaginated(int page, int size) {
+        return taskRepository.findAll(
+                PageRequest.of(page, size, Sort.by("id").descending())
+        );
     }
+
     public Task getTaskById(Long id) {
-        for (Task t : taskList) {
-            if (t.getId().equals(id)) {
-                return t;
-            }
-        }
-        return null;
+        return taskRepository.findById(id).orElse(null);
     }
 
-    public void updateTask(Task updatedTask) {
-        for (Task t : taskList) {
-            if (t.getId().equals(updatedTask.getId())) {
-                t.setTitle(updatedTask.getTitle());
-                t.setDescription(updatedTask.getDescription());
-                t.setDueDate(updatedTask.getDueDate());
-                // keep same status
-                break;
-            }
-        }
+
+    public void updateTask(Task task) {
+        taskRepository.save(task);
     }
 
-    // Mark task as completed
+    public void deleteTask(Long id) {
+        taskRepository.deleteById(id);
+    }
+
+
+    public List<Task> searchByTitle(String keyword) {
+        return taskRepository.findByTitleContainingIgnoreCase(keyword);
+    }
+
+
+    public List<Task> filterByStatus(String status) {
+        return taskRepository.findByStatus(status);
+    }
+
+    public List<Task> filterByPriority(String priority) {
+        return taskRepository.findByPriority(priority);
+    }
+
+
+
     public void completeTask(Long id) {
-        for (Task t : taskList) {
-            if (t.getId().equals(id)) {
-                t.setStatus("completed");
-                break;
-            }
+        Task task = taskRepository.findById(id).orElse(null);
+        if (task != null) {
+            task.setStatus("completed");
+            taskRepository.save(task);
         }
     }
 }

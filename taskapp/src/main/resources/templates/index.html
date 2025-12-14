@@ -1,13 +1,69 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Task App</title>
+    <title>Task Reminder App</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #e6e8eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: #1f2933;
+            padding: 50px 45px;
+            border-radius: 16px;
+            text-align: center;
+            width: 420px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            color: white;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        p {
+            margin-bottom: 35px;
+            color: #d1d5db;
+            font-size: 15px;
+        }
+
+        a.button {
+            display: block;
+            margin: 12px 0;
+            padding: 14px;
+            background: #cbd2d9;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #1f2933;
+            transition: background 0.2s ease;
+        }
+
+        a.button:hover {
+            background: #b7bec8;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Welcome to Task App</h1>
+<div class="card">
+    <h1>Task Reminder App</h1>
+    <p>Manage your tasks efficiently</p>
 
-<a href="/tasks">Go to Task List</a>
+    <a href="/tasks" class="button">View Tasks</a>
+    <a href="/tasks/form" class="button">Add Task</a>
+</div>
 
 </body>
 </html>
