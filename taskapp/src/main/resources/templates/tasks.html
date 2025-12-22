@@ -1,226 +1,304 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Your Tasks</title>
+    <title>Tasks</title>
 
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f7f8fb;
+            color: #111827;
+        }
+
+        main {
             padding: 30px;
-            min-height: 100vh;
-            background: #e6e8eb;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: #ffffff;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h3 {
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        header nav a {
+            margin-right: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #374151;
         }
 
         h1 {
             text-align: center;
-            color: #1f2933;
-            font-size: 32px;
-            margin-bottom: 25px;
+            margin: 26px 0;
+            font-size: 30px;
+            font-weight: 800;
         }
 
+        /* ===== SUCCESS MESSAGE ===== */
         .success {
+            max-width: 1100px;
+            margin: 0 auto 20px;
+            padding: 12px 18px;
+            border-radius: 14px;
+            background: #ecfdf3;
+            color: #166534;
+            font-weight: 700;
             text-align: center;
-            color: #2e7d32;
-            font-weight: 600;
-            margin-bottom: 20px;
         }
 
         /* ===== CONTROLS ===== */
         .controls {
+            max-width: 1100px;
+            margin: 0 auto 36px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 30px;
+            justify-content: center;
         }
 
         .controls input,
         .controls select {
-            padding: 9px 12px;
-            border-radius: 6px;
-            border: 1px solid #cbd2d9;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
             font-size: 14px;
             background: #ffffff;
-            min-width: 160px;
         }
 
         .controls button {
-            padding: 9px 14px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            border-radius: 999px;
             border: none;
-            cursor: pointer;
-            background: #1f2933;
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .controls button:hover {
             background: #111827;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
         }
 
         .controls a {
-            padding: 9px 14px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            color: #111827;
+            font-weight: 700;
             text-decoration: none;
-            background: #cbd2d9;
-            color: #1f2933;
-            font-weight: 600;
-            font-size: 14px;
         }
 
-        .controls a:hover {
-            background: #b7bec8;
+        /* ===== GRID ===== */
+        .task-list {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 26px;
         }
 
-        /* ===== TASK CARD ===== */
+        @media (max-width: 1024px) {
+            .task-list { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .task-list { grid-template-columns: 1fr; }
+        }
+
+        /* ===== CARDS ===== */
         .task-card {
-            background: #1f2933;
-            border-radius: 14px;
-            padding: 20px;
-            margin: 16px auto;
-            width: 85%;
-            max-width: 700px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-            color: white;
+            padding: 22px;
+            border-radius: 22px;
+            box-shadow: 0 14px 32px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
         }
 
-        .task-title {
-            font-size: 20px;
-            font-weight: 600;
+        .task-card:hover {
+            transform: translateY(-5px);
         }
 
-        .task-desc {
-            margin-top: 8px;
-            color: #d1d5db;
+        /* Soft Pinterest palette */
+        .task-card:nth-child(5n+1) { background: #ffe4e6; }
+        .task-card:nth-child(5n+2) { background: #ede9fe; }
+        .task-card:nth-child(5n+3) { background: #e0f2fe; }
+        .task-card:nth-child(5n+4) { background: #ecfeec; }
+        .task-card:nth-child(5n+5) { background: #fef9e7; }
+
+        .task-card.completed {
+            opacity: 0.6;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .description {
             font-size: 14px;
+            margin-bottom: 12px;
+            color: #374151;
         }
 
-        .footer {
+        .meta {
+            font-size: 13px;
+            margin-bottom: 4px;
+            color: #4b5563;
+        }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 6px;
+            background: rgba(255,255,255,0.85);
+        }
+
+        /* ===== ACTIONS ===== */
+        .actions {
             margin-top: 14px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        .icon-btn {
-            margin-left: 10px;
+        .actions a {
+            padding: 8px 16px;
+            font-size: 13px;
+            border-radius: 999px;
+            font-weight: 700;
+            background: #ffffff;
+            color: #111827;
             text-decoration: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #cbd2d9;
-        }
-
-        .icon-btn:hover {
-            color: #ffffff;
-        }
-
-        .completed {
-            text-decoration: line-through;
-            opacity: 0.6;
         }
 
         /* ===== PAGINATION ===== */
         .pagination {
-            text-align: center;
-            margin-top: 35px;
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
 
         .pagination a {
-            margin: 0 6px;
+            padding: 10px 18px;
+            background: #111827;
+            color: white;
+            border-radius: 999px;
             text-decoration: none;
-            font-weight: 600;
-            color: #1f2933;
+            font-weight: 700;
         }
 
-        .pagination a:hover {
-            text-decoration: underline;
+        .pagination a.active {
+            background: #374151;
         }
     </style>
 </head>
 
 <body>
 
-<h1>Your Tasks</h1>
+<header>
+    <h3>TaskReminder</h3>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/tasks">Tasks</a>
+        <a href="/tasks/form">Add Task</a>
+    </nav>
+</header>
 
-<div th:if="${success}" class="success">
-    <p th:text="${success}"></p>
-</div>
+<main>
 
+    <h1>Tasks</h1>
 
-<div class="controls">
+    <div th:if="${success}" class="success" th:text="${success}"></div>
 
+    <div class="controls">
+        <form action="/tasks/search" method="get">
+            <input type="text" name="keyword" placeholder="Search task">
+            <button type="submit">Search</button>
+        </form>
 
-    <form action="/tasks/search" method="get">
-        <input type="text" name="keyword" placeholder="Search by title">
-        <button type="submit">Search</button>
-    </form>
+        <form action="/tasks/filter/status" method="get">
+            <select name="status" onchange="this.form.submit()">
+                <option value="">Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="IN_PROGRESS">In progress</option>
+                <option value="COMPLETED">Completed</option>
+            </select>
+        </form>
 
+        <form action="/tasks/filter/priority" method="get">
+            <select name="priority" onchange="this.form.submit()">
+                <option value="">Priority</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+            </select>
+        </form>
 
-    <form action="/tasks/filter/status" method="get">
-        <select name="status" onchange="this.form.submit()">
-            <option value="">Status</option>
-            <option value="pending">Pending</option>
-            <option value="onprogress">On Progress</option>
-            <option value="completed">Completed</option>
-        </select>
-    </form>
-
-
-    <form action="/tasks/filter/priority" method="get">
-        <select name="priority" onchange="this.form.submit()">
-            <option value="">Priority</option>
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-        </select>
-    </form>
-
-    <a href="/tasks">Clear Filters</a>
-    <a href="/tasks/form">+ Add Task</a>
-</div>
-
-
-<div th:each="task : ${tasks}"
-     class="task-card"
-     th:classappend="${task.status == 'completed'} ? 'completed'">
-
-    <div class="task-title" th:text="${task.title}"></div>
-    <p class="task-desc" th:text="${task.description}"></p>
-    <p>Due Date: <b th:text="${task.dueDate}"></b></p>
-
-    <div class="footer">
-        <span>Status: <b th:text="${task.status}"></b></span>
-        <span>Priority: <b th:text="${task.priority}"></b></span>
-
-        <span>
-            <a th:href="@{'/tasks/edit/' + ${task.id}}" class="icon-btn">✏️</a>
-            <a th:href="@{'/tasks/delete/' + ${task.id}}"
-               onclick="return confirm('Delete this task?')"
-               class="icon-btn">🗑️</a>
-            <a th:if="${task.status != 'completed'}"
-               th:href="@{'/tasks/complete/' + ${task.id}}"
-               class="icon-btn">✔️</a>
-
-        </span>
+        <a href="/tasks">Clear</a>
+        <a href="/tasks/form">+ Add Task</a>
     </div>
-</div>
 
+    <div class="task-list">
 
-<div class="pagination" th:if="${totalPages > 1}">
-    <a th:if="${currentPage > 0}"
-       th:href="@{/tasks(page=${currentPage - 1})}">Previous</a>
+        <div class="task-card"
+             th:each="task : ${tasks}"
+             th:classappend="${task.status.name() == 'COMPLETED'} ? 'completed'">
 
-    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-        <a th:href="@{/tasks(page=${i})}" th:text="${i + 1}"></a>
-    </span>
+            <div class="title" th:text="${task.title}"></div>
+            <div class="description" th:text="${task.description}"></div>
 
-    <a th:if="${currentPage < totalPages - 1}"
-       th:href="@{/tasks(page=${currentPage + 1})}">Next</a>
-</div>
+            <div class="meta">Due date: <b th:text="${task.dueDate}"></b></div>
+            <div class="meta">Created at:
+                <b th:text="${#temporals.format(task.createdAt,'dd-MM-yyyy HH:mm')}"></b>
+            </div>
+
+            <div class="meta" th:if="${task.completedAt != null}">
+                Completed at:
+                <b th:text="${#temporals.format(task.completedAt,'dd-MM-yyyy HH:mm')}"></b>
+            </div>
+
+            <span class="badge" th:text="${task.status}"></span>
+            <span class="badge" th:text="${task.priority}"></span>
+
+            <div class="actions">
+                <a th:if="${task.status.name() != 'COMPLETED'}"
+                   th:href="@{'/tasks/complete/' + ${task.id}}">Complete</a>
+                <a th:href="@{'/tasks/view/' + ${task.id}}">View</a>
+                <a th:if="${task.status.name() != 'COMPLETED'}"
+                   th:href="@{'/tasks/edit/' + ${task.id}}">Edit</a>
+                <a th:href="@{'/tasks/delete/' + ${task.id}}"
+                   onclick="return confirm('Are you sure you want to delete this task?')">
+                    Delete
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+           th:href="@{/tasks(page=${i})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active'"></a>
+    </div>
+
+</main>
 
 </body>
 </html>

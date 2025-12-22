@@ -1,6 +1,8 @@
-package com.example.taskapp.repository;
+package com.taskreminder.app.repository;
 
-import com.example.taskapp.entity.Task;
+import com.taskreminder.app.entity.Task;
+import com.taskreminder.app.enums.TaskPriority;
+import com.taskreminder.app.enums.TaskStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +13,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByTitleContainingIgnoreCase(String keyword);
 
-    List<Task> findByStatus(String status);
-    List<Task> findByPriority(String priority);
+    List<Task> findByStatus(TaskStatus status);
 
+    List<Task> findByPriority(TaskPriority priority);
 }
