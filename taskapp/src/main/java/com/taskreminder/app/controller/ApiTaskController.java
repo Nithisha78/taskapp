@@ -18,13 +18,12 @@ public class ApiTaskController {
     @Autowired
     private TaskService taskService;
 
-    // ---------------- GET ALL TASKS ----------------
+
     @GetMapping
     public List<Task> getAllTasks() {
         return taskService.getAllTasks();
     }
 
-    // ---------------- GET TASK BY ID ----------------
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         Task task = taskService.getTaskById(id);
@@ -34,7 +33,6 @@ public class ApiTaskController {
         return ResponseEntity.ok(task);
     }
 
-    // ---------------- CREATE TASK ----------------
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
         taskService.addTask(task); // status defaults to PENDING
@@ -43,7 +41,7 @@ public class ApiTaskController {
                 .body(task);
     }
 
-    // ---------------- UPDATE TASK ----------------
+
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(
             @PathVariable Long id,
@@ -59,7 +57,7 @@ public class ApiTaskController {
         return ResponseEntity.ok(task);
     }
 
-    // ---------------- DELETE TASK ----------------
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         Task task = taskService.getTaskById(id);
@@ -71,20 +69,19 @@ public class ApiTaskController {
         return ResponseEntity.noContent().build();
     }
 
-    // ---------------- SEARCH BY TITLE ----------------
+
     @GetMapping("/search")
     public List<Task> searchByTitle(@RequestParam String keyword) {
         return taskService.searchByTitle(keyword);
     }
 
-    // ---------------- FILTER BY STATUS ----------------
     @GetMapping("/filter/status")
     public List<Task> filterByStatus(@RequestParam String status) {
         TaskStatus taskStatus = TaskStatus.valueOf(status.toUpperCase());
         return taskService.filterByStatus(taskStatus);
     }
 
-    // ---------------- FILTER BY PRIORITY ----------------
+
     @GetMapping("/filter/priority")
     public List<Task> filterByPriority(@RequestParam String priority) {
         TaskPriority taskPriority = TaskPriority.valueOf(priority.toUpperCase());
