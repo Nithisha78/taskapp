@@ -37,15 +37,16 @@ public class Task {
 
     private LocalDateTime completedAt;
 
-
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Task() {}
 
-
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;

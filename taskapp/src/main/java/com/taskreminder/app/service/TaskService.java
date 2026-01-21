@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -20,12 +21,8 @@ public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
 
-    @Autowired
-    private EmailService emailService;
-
     public void addTask(Task task) {
         task.setStatus(TaskStatus.PENDING);
-        task.setCreatedAt(LocalDateTime.now());
         task.setCompletedAt(null);
         taskRepository.save(task);
     }
@@ -84,23 +81,23 @@ public class TaskService {
 
         if (task != null && task.getStatus() != TaskStatus.COMPLETED) {
             task.setStatus(TaskStatus.COMPLETED);
-            task.setCompletedAt(LocalDateTime.now());
+            task.setCompletedAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
             taskRepository.save(task);
         }
     }
 
     public List<Task> getDueTodayTasks(User user) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
         return taskRepository.findByUserAndDueDate(user, today);
     }
 
     public List<Task> getUpcomingTasks(User user) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
         return taskRepository.findByUserAndDueDateAfter(user, today);
     }
 
     public List<Task> getOverdueTasks(User user) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
         return taskRepository.findByUserAndDueDateBeforeAndStatus(
                 user, today, TaskStatus.PENDING);
     }

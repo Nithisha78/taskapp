@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Profile</title>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #ffffff;
+        }
+
+        .profile-box {
+            max-width: 450px;
+            margin: 60px auto;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 12px 26px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 14px;
+            border: 2px solid #e5e7eb;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+        }
+
+        input[disabled] {
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+
+        button {
+            margin-top: 18px;
+            padding: 12px;
+            width: 100%;
+            border-radius: 999px;
+            background: #4f46e5;
+            color: white;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="profile-box">
+
+    <img id="preview"
+         th:src="${user.profileImage != null}
+                  ? @{/uploads/profile-images/{img}(img=${user.profileImage})}
+                  : 'https://cdn-icons-png.flaticon.com/512/847/847969.png'"
+         alt="Profile Picture">
+
+    <form action="/profile/update" method="post" enctype="multipart/form-data">
+
+        <input type="file"
+               name="profilePic"
+               id="profilePic"
+               accept="image/*">
+
+        <input type="text"
+               name="username"
+               th:value="${user.username}"
+               placeholder="Username"
+               required>
+
+        <input type="email"
+               th:value="${user.email}"
+               disabled>
+
+        <button type="submit">💾 Update Profile</button>
+    </form>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    document.getElementById("profilePic").addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById("preview").src = URL.createObjectURL(file);
+        }
+    });
+</script>
+
+</body>
+</html>
