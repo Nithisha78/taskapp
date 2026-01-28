@@ -47,4 +47,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
 
     Page<Task> findByUser(User user, Pageable pageable);
+
+    List<Task> findByDueDateAndStatusIn(
+            LocalDate dueDate,
+            List<TaskStatus> statuses
+    );
 }

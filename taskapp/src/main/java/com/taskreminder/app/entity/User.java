@@ -27,6 +27,8 @@ public class User {
 
 
     private Boolean firstLogin = true;
+    private String profileImage;
+
 
     public User() {}
 
@@ -55,4 +57,12 @@ public class User {
 
     public Boolean getFirstLogin() { return firstLogin; }
     public void setFirstLogin(Boolean firstLogin) { this.firstLogin = firstLogin; }
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
 }

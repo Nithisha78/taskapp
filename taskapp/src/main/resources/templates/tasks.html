@@ -20,43 +20,8 @@
             max-width: 1100px;
             margin: 0 auto 28px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
+            justify-content: flex-end;
         }
-
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-        }
-
-        .summary-card {
-            padding: 18px 20px;
-            border-radius: 18px;
-            text-align: center;
-            font-weight: 800;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-            min-width: 150px;
-        }
-
-        .summary-card h2 {
-            margin: 0;
-            font-size: 32px;
-        }
-
-        .summary-card span {
-            display: block;
-            margin-top: 6px;
-            font-size: 14px;
-            color: #374151;
-        }
-
-        .pending { background: #ffe4ef; }
-        .progress { background: #e6f7ff; }
-        .done { background: #ede9fe; }
-
 
         .calendar-btn {
             padding: 12px 22px;
@@ -252,36 +217,39 @@
             color: white;
         }
 
-#successPopup {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    background: #22c55e;
-    color: white;
-    padding: 14px 22px;
-    border-radius: 12px;
+.export-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.export-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    min-width: 180px;
+    z-index: 10;
+}
+
+.export-dropdown-menu a {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #4f46e5;
+    font-weight: 700;
     font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-    z-index: 9999;
-
-    opacity: 0;
-    transform: translateY(-20px);
-    animation: slideIn 0.4s ease forwards;
 }
 
-@keyframes slideIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.export-dropdown-menu a:hover {
+    background: #eef2ff;
+    border-radius: 14px;
 }
 
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
+.export-dropdown.show .export-dropdown-menu {
+    display: block;
 }
 
     </style>
@@ -289,31 +257,12 @@
 
 <body>
 
-<div id="successPopup" th:if="${success}">
-    ✔ <span th:text="${success}"></span>
-</div>
-
 <div th:replace="fragments/header :: header"></div>
 
 <main>
 
 
     <div class="top-bar">
-        <div class="summary-cards">
-            <div class="summary-card pending">
-                <h2 th:text="${pendingCount}">0</h2>
-                <span>⏳ Pending</span>
-            </div>
-            <div class="summary-card progress">
-                <h2 th:text="${inProgressCount}">0</h2>
-                <span>🔄 In Progress</span>
-            </div>
-            <div class="summary-card done">
-                <h2 th:text="${doneCount}">0</h2>
-                <span>✅ Completed</span>
-            </div>
-        </div>
-
         <button class="calendar-btn" onclick="toggleCalendar()">📅 Calendar</button>
     </div>
 
@@ -345,45 +294,62 @@
 
         <form action="/tasks/filter/status" method="get">
             <select name="status" onchange="this.form.submit()">
-                <option value="">Status</option>
+                <option value="" disabled selected>Status</option>
                 <option value="PENDING">Pending</option>
                 <option value="IN_PROGRESS">In Progress</option>
                 <option value="COMPLETED">Completed</option>
             </select>
+
         </form>
 
         <form action="/tasks/filter/priority" method="get">
             <select name="priority" onchange="this.form.submit()">
-                <option value="">Priority</option>
+                <option value="" disabled selected>Priority</option>
                 <option value="LOW">Low</option>
                 <option value="MEDIUM">Medium</option>
                 <option value="HIGH">High</option>
             </select>
+
         </form>
 
         <a href="/tasks" class="btn-secondary">Clear Filters</a>
+        <div class="export-dropdown">
+            <button class="btn-secondary" onclick="toggleExportDropdown(event)">
+                Export CSV ▼
+            </button>
+
+            <div class="export-dropdown-menu">
+                <a href="/tasks/export">Download CSV</a>
+                <a href="/tasks/export/email">Get CSV on Email</a>
+
+            </div>
+        </div>
+
     </div>
 
 
     <div class="task-list">
         <div class="task-card"
              th:each="task : ${tasks}"
-             th:classappend="${task.status != null and task.status.name() == 'COMPLETED'} ? 'completed'">
+             th:classappend="${task.status.name() == 'COMPLETED'} ? 'completed'">
 
             <div class="title" th:text="${task.title}"></div>
             <div class="description" th:text="${task.description}"></div>
 
-            <div class="meta">Due date: <b th:text="${task.dueDate}"></b></div>
+            <div class="meta">
+                Due date: <b th:text="${task.dueDate}"></b>
+            </div>
 
-            <div class="meta" th:if="${task.createdAt != null}">
+            <div class="meta">
                 Created at:
-                <b th:text="${#temporals.format(task.createdAt,'dd-MM-yyyy HH:mm')}"></b>
+                <b th:text="${#temporals.format(task.createdAt, 'dd-MM-yyyy HH:mm')}"></b>
             </div>
 
             <div class="meta" th:if="${task.completedAt != null}">
                 Completed at:
-                <b th:text="${#temporals.format(task.completedAt,'dd-MM-yyyy HH:mm')}"></b>
+                <b th:text="${#temporals.format(task.completedAt, 'dd-MM-yyyy HH:mm')}"></b>
             </div>
+
 
             <span class="badge" th:text="${task.status}"></span>
             <span class="badge" th:text="${task.priority}"></span>
@@ -405,12 +371,22 @@
         </div>
     </div>
 
+    <div class="pagination">
+        <a th:if="${currentPage > 0}"
+           th:href="@{'/tasks?page=' + ${currentPage - 1}}">
+            Prev
+        </a>
 
-    <div class="pagination" th:if="${totalPages > 1}">
-        <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"
-           th:href="@{/tasks(page=${i})}"
+        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:href="@{'/tasks?page=' + ${i}}"
            th:text="${i + 1}"
-           th:classappend="${i == currentPage} ? 'active'"></a>
+           th:classappend="${i == currentPage} ? 'active'">
+        </a>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{'/tasks?page=' + ${currentPage + 1}}">
+            Next
+        </a>
     </div>
 
 </main>
@@ -418,26 +394,18 @@
 <div th:replace="fragments/footer :: footer"></div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const popup = document.getElementById("successPopup");
-
-        if (popup) {
-            setTimeout(() => {
-                popup.style.animation = "fadeOut 0.4s ease forwards";
-            }, 3000);
-
-            setTimeout(() => {
-                popup.remove();
-            }, 3500);
-        }
-    });
     let currentDate = new Date();
 
-    function toggleCalendar() {
-        const cal = document.getElementById("calendarWrapper");
-        cal.style.display = cal.style.display === "none" ? "block" : "none";
+   function toggleCalendar() {
+    const cal = document.getElementById("calendarWrapper");
+    if (cal.style.display === "block") {
+        cal.style.display = "none";
+    } else {
+        cal.style.display = "block";
         renderCalendar();
     }
+}
+
 
     function changeMonth(step) {
         currentDate.setMonth(currentDate.getMonth() + step);
@@ -492,6 +460,17 @@
             grid.innerHTML += html;
         }
     }
+    function toggleExportDropdown(event) {
+    event.stopPropagation();
+    document.querySelector(".export-dropdown")
+        .classList.toggle("show");
+}
+
+document.addEventListener("click", function () {
+    const dropdown = document.querySelector(".export-dropdown");
+    if (dropdown) dropdown.classList.remove("show");
+});
+
 </script>
 
 </body>

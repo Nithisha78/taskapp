@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +22,10 @@ public class AuthController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
 
     @GetMapping("/login")
     public String loginPage() {
@@ -36,7 +41,8 @@ public class AuthController {
 
         User user = userRepository.findByEmail(email);
 
-        if (user == null || !user.getPassword().equals(password)) {
+
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
             ra.addFlashAttribute("error", "Invalid email or password");
             return "redirect:/login";
         }
@@ -56,9 +62,9 @@ public class AuthController {
         }
 
         ra.addFlashAttribute("success", "Logged in successfully");
-
         return "redirect:/tasks";
     }
+
 
     @GetMapping("/register")
     public String registerPage(Model model) {
@@ -73,6 +79,9 @@ public class AuthController {
             ra.addFlashAttribute("error", "Email already exists");
             return "redirect:/register";
         }
+
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         String otp = String.valueOf((int) (Math.random() * 900000) + 100000);
 
@@ -92,6 +101,8 @@ public class AuthController {
         ra.addFlashAttribute("email", user.getEmail());
         return "redirect:/verify";
     }
+
+
 
     @GetMapping("/verify")
     public String verifyPage() {
@@ -121,6 +132,8 @@ public class AuthController {
         return "redirect:/verify";
     }
 
+
+
     @PostMapping("/resend-otp")
     public String resendOtp(@RequestParam String email, RedirectAttributes ra) {
 
@@ -147,6 +160,8 @@ public class AuthController {
         return "redirect:/verify";
     }
 
+
+
     @PostMapping("/update-username")
     public String updateUsername(@RequestParam String username, HttpSession session) {
 
@@ -159,12 +174,12 @@ public class AuthController {
         return "redirect:/tasks";
     }
 
+
+
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes ra) {
         session.invalidate();
-
         ra.addFlashAttribute("success", "Logged out successfully");
-
         return "redirect:/";
     }
 }

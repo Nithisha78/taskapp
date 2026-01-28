@@ -10,14 +10,10 @@
             align-items: center;
             padding: 18px 34px;
             margin-bottom: 24px;
-
-
             background: linear-gradient(135deg, #c7d2fe, #e0e7ff);
             border-bottom: 1px solid #a5b4fc;
-
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-
 
         .header-left h2 {
             margin: 0;
@@ -32,7 +28,6 @@
             font-weight: 600;
         }
 
-
         .header-center {
             font-size: 15px;
             font-weight: 800;
@@ -41,7 +36,6 @@
             padding: 6px 14px;
             border-radius: 999px;
         }
-
 
         .header-right {
             display: flex;
@@ -96,14 +90,12 @@
 
         <div class="header-left">
             <h2>TaskReminder✨</h2>
-            <span> </span>
+            <span></span>
         </div>
-
 
         <div class="header-center">
             ⏰ <span id="currentTime"></span>
         </div>
-
 
         <div class="header-right">
             <span class="welcome">
@@ -111,12 +103,21 @@
                 <span th:text="${session.username != null ? session.username : 'User'}"></span> 👋
             </span>
 
-            <a href="/tasks" class="nav-link">📋 Dashboard</a>
+            <a href="/dashboard" class="nav-link">📊 Dashboard</a>
+            <a href="/tasks" class="nav-link">📋 Tasks</a>
             <a href="/tasks/form" class="nav-link nav-primary">➕ Add Task</a>
+
             <a href="/logout"
                class="nav-link nav-danger"
                onclick="return confirm('Logout?')">
                 🚪 Logout
+            </a>
+
+            <a href="/profile" style="text-decoration:none;">
+                <img th:src="${session.loggedUser != null and session.loggedUser.profileImage != null}
+                             ? @{/uploads/profile-images/{img}(img=${session.loggedUser.profileImage})}
+                             : 'https://cdn-icons-png.flaticon.com/512/847/847969.png'"
+                     style="width:40px;height:40px;border-radius:50%;cursor:pointer;">
             </a>
         </div>
     </div>
