@@ -34,3 +34,4 @@ build/
 
 # Ignore uploaded images
 src/main/resources/static/uploads/
+uploads/
