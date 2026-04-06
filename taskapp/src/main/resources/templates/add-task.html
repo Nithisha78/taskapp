@@ -123,6 +123,8 @@
 
             <label>Due Date</label>
             <input type="date" th:field="*{dueDate}" required>
+            <label>Reminder Time</label>
+            <input type="datetime-local" th:field="*{reminderTime}">
 
             <label>Priority</label>
             <select th:field="*{priority}" required>

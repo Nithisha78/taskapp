@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -25,7 +26,8 @@ public class TaskReminderScheduler {
     @Autowired
     private EmailService emailService;
 
-    @Scheduled(cron = "0 0 9 * * ?", zone = "Asia/Kolkata")
+    // ❌ DISABLED DAILY REMINDER (kept as is)
+    // @Scheduled(cron = "0 0 9 * * ?", zone = "Asia/Kolkata")
     public void sendTaskReminders() {
 
         logger.info("Task reminder scheduler executed");
@@ -74,6 +76,54 @@ public class TaskReminderScheduler {
                             "Please plan to complete it on time.\n\n" +
                             "– Task Reminder App"
             );
+        }
+    }
+
+    // ✅ IMPROVED CUSTOM REMINDER
+    @Scheduled(fixedRate = 60000)
+    public void sendCustomReminders() {
+
+        logger.info("Custom reminder scheduler running");
+
+        List<Task> allTasks = taskRepository.findAll();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Task task : allTasks) {
+
+            if (task.getReminderTime() != null &&
+                    !task.isReminderSent() &&
+                    task.getReminderTime().isBefore(now) &&
+                    task.getStatus() != TaskStatus.COMPLETED) {
+
+                String subject = "🔔 Reminder: " + task.getTitle();
+
+                String body =
+                        "Hi " + task.getUser().getUsername() + ",\n\n" +
+
+                                "This is a reminder for your task:\n\n" +
+
+                                "📌 Task: " + task.getTitle() + "\n" +
+                                "📝 Description: " + task.getDescription() + "\n" +
+                                "📅 Due Date: " + task.getDueDate() + "\n" +
+                                "⚡ Priority: " + task.getPriority() + "\n\n" +
+
+                                "❗ Status: Incomplete\n\n" +
+
+                                "Please make sure to complete it on time.\n\n" +
+
+                                "– Task Reminder App";
+
+                emailService.sendEmail(
+                        task.getUser().getEmail(),
+                        subject,
+                        body
+                );
+
+                logger.info("Reminder sent for task: {}", task.getTitle());
+
+                task.setReminderSent(true);
+                taskRepository.save(task);
+            }
         }
     }
 }

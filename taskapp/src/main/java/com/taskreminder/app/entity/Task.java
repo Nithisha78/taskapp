@@ -37,6 +37,10 @@ public class Task {
 
     private LocalDateTime completedAt;
 
+    // ✅ NEW FIELDS
+    private LocalDateTime reminderTime;
+    private boolean reminderSent = false;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -48,75 +52,37 @@ public class Task {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public LocalDate getDueDate() { return dueDate; }
+    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
 
-    public String getDescription() {
-        return description;
-    }
+    public TaskStatus getStatus() { return status; }
+    public void setStatus(TaskStatus status) { this.status = status; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public TaskPriority getPriority() { return priority; }
+    public void setPriority(TaskPriority priority) { this.priority = priority; }
 
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
+    public LocalDateTime getCompletedAt() { return completedAt; }
+    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
 
-    public TaskStatus getStatus() {
-        return status;
-    }
+    // ✅ NEW GETTERS/SETTERS
+    public LocalDateTime getReminderTime() { return reminderTime; }
+    public void setReminderTime(LocalDateTime reminderTime) { this.reminderTime = reminderTime; }
 
-    public void setStatus(TaskStatus status) {
-        this.status = status;
-    }
+    public boolean isReminderSent() { return reminderSent; }
+    public void setReminderSent(boolean reminderSent) { this.reminderSent = reminderSent; }
 
-    public TaskPriority getPriority() {
-        return priority;
-    }
-
-    public void setPriority(TaskPriority priority) {
-        this.priority = priority;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(LocalDateTime completedAt) {
-        this.completedAt = completedAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }
